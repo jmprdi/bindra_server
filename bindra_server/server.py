@@ -1,5 +1,4 @@
 from aiohttp import web
-import socketio
 import logging
 
 import ghidra
