@@ -21,9 +21,13 @@ def get_current_program(args):
     """
     print('got current program {}'.format(currentProgram))
     return currentProgram
+
+def test(args):
+    return 'TEST SUCCESSFUL'
     
 handlers = {
         'getCurrentProgram': get_current_program
+        'test': test
 }
 
 def handle(request):
@@ -58,6 +62,7 @@ def start_server():
             connection.sendall(response)
         except Exception as e:
             print('Connection exception with {}: {}'.format(client, e))
+            connection.sendall('ERROR' + str(e))
         finally:
             connection.close()
 

@@ -46,7 +46,7 @@ class BindraServer():
 
     async def __handle_test(self, request):
         response = await self.ghrequest(json.dumps({
-                "request": "getCurrentProgram",
+                "request": "test",
                 "args": [
                 ]
             }))
