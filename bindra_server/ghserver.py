@@ -62,7 +62,7 @@ def start_server():
             connection.close()
 
 def start_bindra():
-    return subprocess.Popen(['python3', os.path.join(os.path.dirname(os.path.realpath(__file__)), 'server.py')])
+    return subprocess.Popen(['python3', os.path.join('/tmp/bindra_server/bindra_server', 'server.py')])
 
 if __name__ == "__main__":
     try:
