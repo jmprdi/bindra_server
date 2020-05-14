@@ -17,6 +17,7 @@ class BindraServer():
         self._app = web.Application()
         self.__init_routes()
         self._port = port
+        print('Initialized bindra server on port {}.'.format(port))
 
     def __handle_index(self, request):
         print('got request')
@@ -38,5 +39,6 @@ class BindraServer():
 if __name__ == "__main__":
     bs = BindraServer(3000)
     bs.run()
+    print('Starting bindra server on port 3000.')
 
 
