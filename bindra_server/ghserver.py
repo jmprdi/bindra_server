@@ -49,8 +49,9 @@ def handle(request):
             'type': request['request'],
             'data': data,
             }
+    print('Response is: ', response)
     try:
-        response = bytes(json.dumps(response), 'utf8')
+        response = json.dumps(response)
     except Exception as e:
         print('dump error ', e)
     print('Responding with: ', response)
