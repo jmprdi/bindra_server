@@ -39,7 +39,7 @@ class BindraServer():
         print('Initialized bindra server.')
 
     def __handle_index(self, request):
-        print('got request')
+        return web.Response(text='This is the index. If you see this you are using me wrong!')
 
     def __handle_status(self, request):
         print(dir(ghidra))
@@ -68,7 +68,6 @@ class BindraServer():
                 '/test',
                 self.__handle_test
                 )
-
 
     def run(self):
         web.run_app(self._app)
