@@ -51,6 +51,7 @@ class BindraServer():
                 ]
             }))
         print('Got response: ', response)
+        return web.Response(text=response)
 
     def __init_routes(self):
         self._app.router.add_get(
