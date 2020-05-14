@@ -14,9 +14,6 @@ or performs the requested actions.
 
 HOST, PORT = "localhost", 6666
 
-handlers = {
-        'getCurrentProgram': get_current_program
-}
 
 def get_current_program(args):
     """
@@ -25,6 +22,9 @@ def get_current_program(args):
     print('got current program {}'.format(currentProgram))
     return currentProgram
     
+handlers = {
+        'getCurrentProgram': get_current_program
+}
 
 def handle(request):
     try:
