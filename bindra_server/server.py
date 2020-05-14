@@ -8,7 +8,7 @@ class BindraServer():
     Ghidra socket.io server
     """
 
-    def __init__(self, port=3000):
+    def __init__(self):
         """
         Initialize the Bindra Socket.IO server
 
@@ -17,7 +17,7 @@ class BindraServer():
         self._app = web.Application()
         self.__init_routes()
         self._port = port
-        print('Initialized bindra server on port {}.'.format(port))
+        print('Initialized bindra server.')
 
     def __handle_index(self, request):
         print('got request')
@@ -42,8 +42,9 @@ class BindraServer():
         web.run_app(self._app)
 
 if __name__ == "__main__":
-    bs = BindraServer(3000)
+    print('Starting bindra server.')
+    bs = BindraServer()
     bs.run()
-    print('Starting bindra server on port 3000.')
+    print('Started bindra server.')
 
 
