@@ -20,7 +20,7 @@ def get_current_program(args):
     Test function to make sure we're running right
     """
     print('got current program {}'.format(currentProgram))
-    return currentProgram
+    return currentProgram.encode('utf8')
 
 def test(args):
     print('GOT TEST')
