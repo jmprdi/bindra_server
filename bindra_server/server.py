@@ -1,4 +1,5 @@
 from aiohttp import web
+import socket
 import logging
 import sys
 import subprocess
@@ -10,14 +11,18 @@ class BindraServer():
     Ghidra socket.io server
     """
 
+    """
     async def ghrequest(self, message):
         reader, writer = await asyncio.open_connection(
                 '127.0.0.1',
                 6666
                 )
+        print('writing ', message)
         writer.write(message.encode('utf8'))
-        writer.write_eof()
+        #writer.write_eof()
         await writer.drain()
+        writer.close()
+        print('closed writer')
         request = b''
         while True:
             tp = await reader.read(1024)
@@ -25,10 +30,33 @@ class BindraServer():
             reader.feed_eof()
             if reader.at_eof():
                 break
-        print(request.decode('utf8'))
-        writer.close()
+        print('got ', request.decode('utf8'))
         await writer.wait_closed()
         return request
+    """
+    def ghrequest(self, message):
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.connect(('127.0.0.1', 6666))
+        try:
+            sock.sendall(message.encode('utf8'))
+            sock.shutdown(socket.SHUT_WR)
+            print('sent ', message)
+            response = b''
+            try:
+                while True:
+                    print('receiving', response)
+                    data = sock.recv(1024)
+                    if data:
+                        response += data
+                    else:
+                        break
+            except Exception as e:
+                print('Server.py exception with {}'.format(e))
+            finally:
+                sock.close()
+            return response
+        except Exception as e:
+            print('could not send', e)
 
     def __init__(self):
         """
@@ -47,7 +75,7 @@ class BindraServer():
         print(dir(ghidra))
 
     async def __handle_test(self, request):
-        response = await self.ghrequest(json.dumps({
+        response = self.ghrequest(json.dumps({
                 "request": "getCurrentProgram",
                 "args": [
                 ]
@@ -76,6 +104,9 @@ class BindraServer():
 
 
 if __name__ == "__main__":
+    #logfile = sys.argv[1]
+    #sys.stdout = open(logfile, 'ab')
+    #sys.stderr = open(logfile, 'ab')
     print('Starting bindra server.')
     bs = BindraServer()
     bs.run()

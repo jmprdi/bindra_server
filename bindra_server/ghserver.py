@@ -18,9 +18,10 @@ HOST, PORT = "localhost", 6666
 def get_current_program(args):
     """
     Test function to make sure we're running right
-    """
     print('got current program {}'.format(currentProgram))
     return str(currentProgram)
+    """
+    return "bash"
 
 def test(args):
     print('GOT TEST')
@@ -63,9 +64,10 @@ def start_server():
     sock.listen(1)
     while True:
         connection, client = sock.accept()
-        print('Got connection')
+        print('Got connection from ', client)
         request = b''
         try:
+            print('receiving', request)
             while True:
                 data = connection.recv(1024)
                 if data:
@@ -75,26 +77,32 @@ def start_server():
             print('Request: ', request)
             response = handle(request)
             print('Sending response: ', response, type(response))
-            connection.sendall(response)
+            connection.sendall(response.encode('utf8'))
         except Exception as e:
             print('Connection exception with {}: {}'.format(client, e))
             connection.sendall('ERROR' + str(e))
         finally:
+            connection.shutdown(socket.SHUT_WR)
             connection.close()
 
 def start_bindra():
+    """
     with open('/tmp/script.log', 'ab') as out:
         return subprocess.Popen(['python3', os.path.join('/tmp/bindra_server/bindra_server', 'server.py')], stdout=out, stderr=out)
-    #return subprocess.Popen(['python3', os.path.join('.', 'server.py')])
+    """
+    return subprocess.Popen(['python3', os.path.join('.', 'server.py'), './script.log'])
     #pass
 
 if __name__ == "__main__":
     try:
         print('Initializing bindra server.')
-        bs = start_bindra()
+        #bs = start_bindra()
+        print('Initialized bindra server')
         start_server()
     except KeyboardInterrupt:
-        bs.kill()
+        #bs.kill()
+        pass
     except Exception as e:
         print('Fatal error. Exiting.')
+        #bs.kill()
         print(e)
