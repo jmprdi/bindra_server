@@ -1,5 +1,6 @@
-from aiohttp import web
+#from aiohttp import web
 import logging
+import sys
 
 #import ghidra
 
@@ -43,8 +44,10 @@ class BindraServer():
 
 if __name__ == "__main__":
     print('Starting bindra server.')
-    bs = BindraServer()
-    bs.run()
+    #bs = BindraServer()
+    #bs.run()
+    print('Current python executable is {}'.format(sys.executable))
+
     print('Started bindra server.')
 
 
