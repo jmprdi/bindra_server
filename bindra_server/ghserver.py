@@ -14,7 +14,8 @@ or performs the requested actions.
 
 HOST, PORT = "localhost", 6666
 
-async def handle(reader, writer):
+@asyncio.coroutine
+def handle(reader, writer):
     print('Got request: ')
     request = b''
     while True:
