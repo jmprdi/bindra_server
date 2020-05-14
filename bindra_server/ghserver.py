@@ -62,7 +62,7 @@ def start_server():
             connection.close()
 
 def start_bindra():
-    with open('/tmp/script.log', 'wb') as out:
+    with open('/tmp/script.log', 'ab') as out:
         return subprocess.Popen(['python3', os.path.join('/tmp/bindra_server/bindra_server', 'server.py')], stdout=out, stderr=out)
 
 if __name__ == "__main__":
