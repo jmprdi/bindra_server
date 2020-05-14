@@ -26,7 +26,7 @@ def test(args):
     return 'TEST SUCCESSFUL'
     
 handlers = {
-        'getCurrentProgram': get_current_program
+        'getCurrentProgram': get_current_program,
         'test': test
 }
 
