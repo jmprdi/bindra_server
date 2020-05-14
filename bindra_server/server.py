@@ -16,6 +16,8 @@ class BindraServer():
                 6666
                 )
         writer.write(message.encode('utf8'))
+        writer.write_eof()
+        await writer.drain()
         request = b''
         while True:
             tp = await reader.read(1024)
@@ -46,12 +48,12 @@ class BindraServer():
 
     async def __handle_test(self, request):
         response = await self.ghrequest(json.dumps({
-                "request": "test",
+                "request": "getCurrentProgram",
                 "args": [
                 ]
             }))
         print('Got response: ', response)
-        return web.Response(text=response)
+        return web.Response(text=response.decode('utf8'))
 
     def __init_routes(self):
         self._app.router.add_get(
