@@ -62,7 +62,8 @@ def start_server():
             connection.close()
 
 def start_bindra():
-    return subprocess.Popen(['python3', os.path.join('/tmp/bindra_server/bindra_server', 'server.py')])
+    with open('/tmp/script.log', 'wb') as out:
+        return subprocess.Popen(['python3', os.path.join('/tmp/bindra_server/bindra_server', 'server.py')], stdout=out, stderr=out)
 
 if __name__ == "__main__":
     try:
@@ -71,5 +72,8 @@ if __name__ == "__main__":
         start_server()
     except KeyboardInterrupt:
         bs.kill()
+    except Exception as e:
+        print('Fatal error. Exiting.')
+        print(e)
 
 
