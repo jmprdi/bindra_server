@@ -34,7 +34,7 @@ handlers = {
 def handle(request):
     print('handling request: ', request, type(request))
     try:
-        request = json.loads(bytes(request, 'utf8'))
+        request = json.loads(request)
     except Exception as e:
         print('Error: request {} was not valid json.'.format(request))
 
@@ -72,7 +72,7 @@ def start_server():
                 else:
                     break
             print('Request: ', request)
-            response = handle(request.decode('utf8'))
+            response = handle(request)
             print('Sending response: ', response, type(response))
             connection.sendall(response)
         except Exception as e:
