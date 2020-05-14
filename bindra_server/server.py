@@ -1,7 +1,7 @@
 from aiohttp import web
 import logging
 
-import ghidra
+#import ghidra
 
 class BindraServer():
     """
@@ -11,7 +11,7 @@ class BindraServer():
     def __init__(self, port=3000):
         """
         Initialize the Bindra Socket.IO server
-        
+
         @params port The port to run the server on
         """
         self._app = web.Application()
@@ -27,10 +27,15 @@ class BindraServer():
 
 
     def __init_routes(self):
-        self._app.add_routes([
-                web.get('/', self.__handle_index)
-                web.post('/status', self.__handle_status)
-            ])
+        self._app.router.add_get(
+                '/', 
+                self.__handle_index
+                )
+
+        self._app.router.add_post(
+                '/status', 
+                self.__handle_status
+                )
 
 
     def run(self):
