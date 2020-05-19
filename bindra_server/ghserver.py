@@ -28,7 +28,7 @@ def handler_decompile(args):
     addr = int(args[0])
     program = currentProgram
     decompinterface = ghidra.app.decompiler.DecompInterface()
-    decompInterface.openProgram(program)
+    decompinterface.openProgram(program)
     functions = program.getFunctionManager().getFunctions(True)
     for func in functions:
         faddr = int('0x' + func.getEntryPoint().__repr__(), 16)
