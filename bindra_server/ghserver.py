@@ -24,6 +24,10 @@ def handler_functions(args):
 
     #return 'TEST_RESPONSE'
 
+def handler_load(args):
+    fname = args[0]
+    return str(type(currentProgram))
+
 def handler_decompile(args):
     addr = int(args[0])
     program = currentProgram
@@ -44,7 +48,8 @@ def handler_decompile(args):
 handlers = {
         'test': handler_test,
         'functions': handler_functions,
-        'decompile': handler_decompile
+        'decompile': handler_decompile,
+        'load': handler_load
         }
 
 def process(request, logger):

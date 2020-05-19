@@ -22,7 +22,8 @@ class BindraServer():
         self.requesters = {
                 'test': self.request_test,
                 'functions': self.request_functions,
-                'decompile': self.request_decompile
+                'decompile': self.request_decompile,
+                'load': self.request_load
                 }
 
     def request_test(self, args):
@@ -62,6 +63,14 @@ class BindraServer():
                 'args': [
                     int(args.split(',')[0])
                     ]
+                }
+        request = bytes(json.dumps(request), 'utf8')
+        return request
+
+    def request_load(self, args):
+        request = {
+                'request': 'load',
+                'args': []
                 }
         request = bytes(json.dumps(request), 'utf8')
         return request
