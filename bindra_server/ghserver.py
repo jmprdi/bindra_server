@@ -92,7 +92,7 @@ class GhidraServer(SocketServer.TCPServer):
         return
 
 def startp3server():
-    return subprocess.Popen(['python3', '/tmp/ghidra_server/ghidra_server/server.py'])
+    return subprocess.Popen(['python3', '/tmp/bindra_server/bindra_server/server.py'])
 
 if __name__ == '__main__':
     startp3server()
