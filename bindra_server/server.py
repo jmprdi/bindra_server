@@ -19,8 +19,18 @@ class BindraServer():
                 '/',
                 self.request
                 )
+        self.requesters = {
+                'test': self.request_test,
+                'functions': self.request_functions
+                }
 
-    def test_request(self):
+    def request_test(self, args):
+        """
+        Requests a test from the ghserver
+
+        @param args Unused
+        @returns JSON-ified bytes request
+        """
         request = {
                 'request': 'test',
                 'args': []
@@ -28,10 +38,23 @@ class BindraServer():
         request = bytes(json.dumps(request), 'utf8')
         return request
 
+    def request_functions(self, args):
+        """
+        Requests a list of functions from the ghserver
+
+        @param args Unused
+        @returns JSON-ified bytes request
+        """
+        request = {
+                'request': 'functions',
+                'args': []
+                }
+        request = bytes(json.dumps(request), 'utf8')
+
     def run(self):
         web.run_app(self._app)
 
-    def request(self, _request):
+    def send_request(self, _request):
         """
         Responds to a request from the Binara Binary Ninja plugin
         Requests the correct data from the ghserver, gets the result, and
@@ -39,11 +62,15 @@ class BindraServer():
 
         Note: This is a client
         """
+
+        query = _request.query
+        request = self.requesters[query['type']](query['args'])
+
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.connect((HOST, PORT))
         # Needs bytes
-        sock.send(bytes(str(len(self.test_request())), 'utf8') + b'\n')
-        sock.send(self.test_request())
+        sock.send(bytes(str(len(request)), 'utf8') + b'\n')
+        sock.send(request)
         response = b''
         try:
             while True:
