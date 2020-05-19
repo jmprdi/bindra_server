@@ -35,7 +35,7 @@ def handler_decompile(args):
 
 handlers = {
         'test': handler_test,
-        'functions': handler_functions
+        'functions': handler_functions,
         'decompile': handler_decompile
         }
 
