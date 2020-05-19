@@ -33,7 +33,7 @@ def handler_decompile(args):
     for func in functions:
         faddr = int('0x' + func.getEntryPoint().__repr__(), 16)
         if faddr == addr:
-            results = decompinterface.decompileFunction(function, 30, monitor)
+            results = decompinterface.decompileFunction(func, 30, monitor)
             response = 'Function found, but decompile failed at {}'.format(faddr)
             if results.decompileCompleted():
                 response = results.getDecompiledFunction().getC()
