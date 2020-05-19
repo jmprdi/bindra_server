@@ -1,108 +1,103 @@
+import logging
+import sys
+import SocketServer
 import socket
 import json
 import subprocess
 import os
-# import ghidra
 
-"""
-This server is run by Ghidra's Jython 2.7
-
-It handles requests from the main Bindra server
-and returns to the Bindra server the requested data
-or performs the requested actions.
-"""
-
-HOST, PORT = "localhost", 6666
+import ghidra
 
 
-def get_current_program(args):
-    """
-    Test function to make sure we're running right
-    print('got current program {}'.format(currentProgram))
-    return str(currentProgram)
-    """
-    return "bash"
+logging.basicConfig(level=logging.DEBUG,
+        format='%(name)s: %(message)s',
+        )
 
-def test(args):
-    print('GOT TEST')
-    return 'TEST SUCCESSFUL'
+def handler_test(args):
+    return currentProgram.__repr__()
+
+    #return 'TEST_RESPONSE'
 
 handlers = {
-        'getCurrentProgram': get_current_program,
-        'test': test
+        'test': handler_test
         }
 
-def handle(request):
-    print('handling request: ', request, type(request))
-    try:
-        request = json.loads(request)
-    except Exception as e:
-        print('Error: request {} was not valid json.'.format(request))
-
-    print('Got request: ', request)
-
-    try:
-        data = handlers[request['request']](request['args'])
-    except Exception as e:
-        print('Error in handler', e)
-
-    response = {
-            'type': request['request'],
-            'data': data,
-            }
-    print('Response is: ', response)
-    try:
-        response = json.dumps(response)
-    except Exception as e:
-        print('dump error ', e)
-    print('Responding with: ', response)
-    return response
-
-def start_server():
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    sock.bind((HOST, PORT))
-    sock.listen(1)
-    while True:
-        connection, client = sock.accept()
-        print('Got connection from ', client)
-        request = b''
-        try:
-            print('receiving', request)
-            while True:
-                data = connection.recv(1024)
-                if data:
-                    request += data
-                else:
-                    break
-            print('Request: ', request)
-            response = handle(request)
-            print('Sending response: ', response, type(response))
-            connection.sendall(response.encode('utf8'))
-        except Exception as e:
-            print('Connection exception with {}: {}'.format(client, e))
-            connection.sendall('ERROR' + str(e))
-        finally:
-            connection.shutdown(socket.SHUT_WR)
-            connection.close()
-
-def start_bindra():
+def process(request, logger):
     """
-    with open('/tmp/script.log', 'ab') as out:
-        return subprocess.Popen(['python3', os.path.join('/tmp/bindra_server/bindra_server', 'server.py')], stdout=out, stderr=out)
-    """
-    return subprocess.Popen(['python3', os.path.join('.', 'server.py'), './script.log'])
-    #pass
+    Processes a request from the web server and returns the correct response
 
-if __name__ == "__main__":
-    try:
-        print('Initializing bindra server.')
-        #bs = start_bindra()
-        print('Initialized bindra server')
-        start_server()
-    except KeyboardInterrupt:
-        #bs.kill()
-        pass
-    except Exception as e:
-        print('Fatal error. Exiting.')
-        #bs.kill()
-        print(e)
+    @param request A raw request from the web server
+    @param logger The request handler's logger
+    """
+
+    json_request = json.loads(request)
+    logger.debug('Processing request {}'.format(json_request))
+    response = handlers[json_request['request']](json_request['args'])
+    return json.dumps(response)
+
+class GhidraRequestHandler(SocketServer.BaseRequestHandler):
+
+    def __init__(self, request, client_address, server):
+        """
+        Initializes a handler to respond to an incoming address
+
+        @param request Handle to incoming connection
+        @param client_address Tuple defining address/port pair for the server
+        @param server The server instance 
+        """
+
+        self.logger = logging.getLogger('GhidraServer')
+        self.logger.debug('Initialized Ghidra Request Handler.')
+        SocketServer.BaseRequestHandler.__init__(self, request, client_address, server)
+        return
+
+    def handle(self):
+        """
+        Handles incoming requests and sends responses
+        """
+
+        self.logger.debug('Handling request from {}'.format(self.client_address))
+        rsize = b''
+        while True:
+            data = self.request.recv(1)
+            if not data or data == b'\n':
+                break
+            rsize += data
+        rsize = int(rsize)
+        self.logger.debug('Request size {}'.format(rsize))
+        request = self.request.recv(rsize)
+        self.logger.debug('Request contents {}'.format(request))
+        response = process(request, self.logger)
+
+        self.request.send(response)
+        return
+
+class GhidraServer(SocketServer.TCPServer):
+    """
+    GhidraServer is a TCP socket server that receives a request from the web
+    API server, grabs information from Ghidra, and returns it to the server
+    """
+
+    def __init__(self, server_address, handler_class=GhidraRequestHandler):
+        """
+        TCP Server initializer
+
+        @param server_address Defines the address/port pair for the server
+        @param handler_class Subclass of BaseRequestHandler that handles incoming requests
+        """
+
+        self.logger = logging.getLogger('GhidraServer')
+        self.logger.debug('Initialized Ghidra Server')
+        SocketServer.TCPServer.__init__(self, server_address, handler_class)
+        return
+
+def startp3server():
+    return subprocess.Popen(['python3', '/tmp/ghidra_server/ghidra_server/server.py'])
+
+if __name__ == '__main__':
+    startp3server()
+    address = ('localhost', 6666) # let the kernel give us a port
+    server = GhidraServer(address, GhidraRequestHandler)
+    ip, port = server.server_address # find out what port we were given
+    server.serve_forever()
+

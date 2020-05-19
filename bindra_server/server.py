@@ -6,110 +6,58 @@ import subprocess
 import asyncio
 import json
 
+# import ghidra
+
+HOST = 'localhost'
+PORT = 6666
+
+
 class BindraServer():
-    """
-    Ghidra socket.io server
-    """
-
-    """
-    async def ghrequest(self, message):
-        reader, writer = await asyncio.open_connection(
-                '127.0.0.1',
-                6666
-                )
-        print('writing ', message)
-        writer.write(message.encode('utf8'))
-        #writer.write_eof()
-        await writer.drain()
-        writer.close()
-        print('closed writer')
-        request = b''
-        while True:
-            tp = await reader.read(1024)
-            request += tp
-            reader.feed_eof()
-            if reader.at_eof():
-                break
-        print('got ', request.decode('utf8'))
-        await writer.wait_closed()
-        return request
-    """
-    def ghrequest(self, message):
-        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        sock.connect(('127.0.0.1', 6666))
-        try:
-            sock.sendall(message.encode('utf8'))
-            sock.shutdown(socket.SHUT_WR)
-            print('sent ', message)
-            response = b''
-            try:
-                while True:
-                    print('receiving', response)
-                    data = sock.recv(1024)
-                    if data:
-                        response += data
-                    else:
-                        break
-            except Exception as e:
-                print('Server.py exception with {}'.format(e))
-            finally:
-                sock.close()
-            return response
-        except Exception as e:
-            print('could not send', e)
-
     def __init__(self):
-        """
-        Initialize the Bindra Socket.IO server
-
-        @params port The port to run the server on
-        """
         self._app = web.Application()
-        self.__init_routes()
-        print('Initialized bindra server.')
-
-    def __handle_index(self, request):
-        return web.Response(text='This is the index. If you see this you are using me wrong!')
-
-    def __handle_status(self, request):
-        print(dir(ghidra))
-
-    async def __handle_test(self, request):
-        response = self.ghrequest(json.dumps({
-                "request": "getCurrentProgram",
-                "args": [
-                ]
-            }))
-        print('Got response: ', response)
-        return web.Response(text=response.decode('utf8'))
-
-    def __init_routes(self):
         self._app.router.add_get(
-                '/', 
-                self.__handle_index
+                '/',
+                self.request
                 )
 
-        self._app.router.add_post(
-                '/status', 
-                self.__handle_status
-                )
-
-        self._app.router.add_get(
-                '/test',
-                self.__handle_test
-                )
+    def test_request(self):
+        request = {
+                'request': 'test',
+                'args': []
+        }
+        request = bytes(json.dumps(request), 'utf8')
+        return request
 
     def run(self):
         web.run_app(self._app)
 
+    def request(self, _request):
+        """
+        Responds to a request from the Binara Binary Ninja plugin
+        Requests the correct data from the ghserver, gets the result, and
+        sends it back to Binary Ninja
+
+        Note: This is a client
+        """
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.connect((HOST, PORT))
+        # Needs bytes
+        sock.send(bytes(str(len(self.test_request())), 'utf8') + b'\n')
+        sock.send(self.test_request())
+        response = b''
+        try:
+            while True:
+                data = sock.recv(1024)
+                if not data:
+                    break
+                response += data
+        except Exception as e:
+            print('error', e)
+        finally:
+            print('Received ', repr(response))
+            sock.close()
+        return web.Response(text=response.decode('utf8'))
 
 if __name__ == "__main__":
-    #logfile = sys.argv[1]
-    #sys.stdout = open(logfile, 'ab')
-    #sys.stderr = open(logfile, 'ab')
-    print('Starting bindra server.')
     bs = BindraServer()
     bs.run()
-    print('Started bindra server.')
-
-

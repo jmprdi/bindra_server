@@ -1,0 +1,71 @@
+import socket
+import json
+import subprocess
+import os
+
+HOST = ''
+PORT = 6666
+
+def test_handler(request_args):
+    """
+    Handles a test request
+    """
+    print('Test handler: ', request_args)
+    response = {
+        'response': 'test'
+    }
+    response = json.dumps(response)
+    return response.encode('utf8')
+
+
+handlers = {
+        'test': test_handler
+}
+
+def handle(request):
+    """
+    Handles a request, gets the right stuff from ghidra, and returns whatever data we need
+
+    @param (bytes) request The raw JSON encoded request data.
+    @returns (bytes) JSON-Encoded response
+    """
+    request = json.loads(request)
+    print('Handling: ', request)
+    response = handlers[request['request']](request['args'])
+    return response
+
+def start():
+    """
+    This server runs inside of ghidra's Jython interpreter
+    It accepts a request and returns a result to deliver back to the
+    Python3 aiohttp server
+    """
+
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    sock.bind((HOST, PORT))
+    sock.listen(1)
+    while True:
+        conn, addr = sock.accept()
+        print('Connected by ', addr)
+        request = b''
+        try:
+            rsize = conn.recv(512)
+            print('Size: ', rsize)
+            request = conn.recv(int(rsize))
+        except Exception as e:
+            print('Error', e)
+        finally:
+            print('Got: ', request)
+            response = handle(request)
+            conn.send(bytes(str(len(response)), 'utf8'))
+            conn.send(response)
+            conn.shutdown(socket.SHUT_WR)
+            conn.close()
+
+def start_p3server():
+    return subprocess.Popen(['python3', 'server.py'])
+
+if __name__ == "__main__":
+    #bs = start_p3server()
+    start()
