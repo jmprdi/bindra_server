@@ -32,7 +32,7 @@ def handler_decompile(args):
         faddr = int('0x' + func.getEntryPoint().__repr__(), 16)
         if faddr == addr:
             decomp = ghidra.app.decompiler.DecompInterface().decompileFunction(func, 0, ghidra.util.task.ConsoleTaskMonitor())
-            response = decomp.getDecompiledFunction.getC()
+            response = decomp.getDecompiledFunction().getC()
             return response
     return "Decompile Error: could not find function at {}".format(faddr)
 
