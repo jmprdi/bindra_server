@@ -24,6 +24,15 @@ def handler_functions(args):
 
     #return 'TEST_RESPONSE'
 
+def handler_decompile(args):
+    addr = args[0]['name']
+    name = args[1]['name']
+    program = currentProgram
+    function = program.getFunctionManager().getFunctionAt(addr)
+    decomp = ghidra.app.decompiler.DecompInterface().decompileFunction(function, 0, ghidra.util.task.ConsoleTaskMonitor())
+    response = decomp.getDecompiledFunction.getC()
+    return response
+
 handlers = {
         'test': handler_test,
         'functions': handler_functions

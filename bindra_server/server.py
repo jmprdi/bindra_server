@@ -21,11 +21,12 @@ class BindraServer():
                 )
         self.requesters = {
                 'test': self.request_test,
-                'functions': self.request_functions
+                'functions': self.request_functions,
+                'decompile': self.request_decompile
                 }
 
     def request_test(self, args):
-        """
+            """
         Requests a test from the ghserver
 
         @param args Unused
@@ -34,7 +35,7 @@ class BindraServer():
         request = {
                 'request': 'test',
                 'args': []
-        }
+                }
         request = bytes(json.dumps(request), 'utf8')
         return request
 
@@ -52,8 +53,19 @@ class BindraServer():
         request = bytes(json.dumps(request), 'utf8')
         return request
 
-    def run(self):
-        web.run_app(self._app)
+    def request_decompile(self, args):
+        """
+
+        """
+        request = {
+                'request': 'decompile',
+                'args': [
+                    int(args.split(',')[0])
+                    ]
+                }
+
+        def run(self):
+            web.run_app(self._app)
 
     def send_request(self, _request):
         """
