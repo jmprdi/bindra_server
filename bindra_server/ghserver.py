@@ -25,7 +25,7 @@ def handler_functions(args):
     #return 'TEST_RESPONSE'
 
 def handler_load(args):
-    fname = args[0]
+    # fname = args[0]
     return str(type(currentProgram))
 
 def handler_decompile(args):
