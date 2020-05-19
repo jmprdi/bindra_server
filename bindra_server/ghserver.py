@@ -34,8 +34,7 @@ def handler_decompile(args):
             decomp = ghidra.app.decompiler.DecompInterface().decompileFunction(func, 0, ghidra.util.task.ConsoleTaskMonitor())
             response = decomp.getDecompiledFunction.getC()
             return response
-        else:
-            return "Decompile Error: could not find function at {}".format(faddr)
+    return "Decompile Error: could not find function at {}".format(faddr)
 
 handlers = {
         'test': handler_test,
