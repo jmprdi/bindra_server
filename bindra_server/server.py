@@ -63,6 +63,8 @@ class BindraServer():
                     int(args.split(',')[0])
                     ]
                 }
+        request = bytes(json.dumps(request), 'utf8')
+        return request
 
     def run(self):
         web.run_app(self._app)
