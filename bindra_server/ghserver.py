@@ -25,8 +25,10 @@ def handler_functions(args):
     #return 'TEST_RESPONSE'
 
 def handler_load(args):
-    # fname = args[0]
-    return str(type(currentProgram))
+    fname = args[0]
+    currexpath = currentProgram.getExecutablePath()
+    progdir = os.path.dirname(os.path.abspath(currexpath))
+    return str(type(progdir))
 
 def handler_decompile(args):
     addr = int(args[0])
