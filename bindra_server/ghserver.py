@@ -26,12 +26,15 @@ def handler_functions(args):
 
 def handler_decompile(args):
     addr = int(args[0])
-    address = ghidra.program.model.address.Address.getAddress(str(hex(addr)))
     program = currentProgram
-    function = program.getFunctionManager().getFunctionAt(address)
-    decomp = ghidra.app.decompiler.DecompInterface().decompileFunction(function, 0, ghidra.util.task.ConsoleTaskMonitor())
-    response = decomp.getDecompiledFunction.getC()
-    return response
+    functions = program.getFunctionManager().getFunctions(True)
+    for func in functions:
+        if int('0x' + func.getEntryPoint().__repr__(), 16) == addr:
+            decomp = ghidra.app.decompiler.DecompInterface().decompileFunction(func, 0, ghidra.util.task.ConsoleTaskMonitor())
+            response = decomp.getDecompiledFunction.getC()
+            return response
+        else:
+            return "Decompile Error: could not find function at {}".format(addr)
 
 handlers = {
         'test': handler_test,
