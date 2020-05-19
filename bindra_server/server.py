@@ -61,7 +61,7 @@ class BindraServer():
         request = {
                 'request': 'decompile',
                 'args': [
-                    int(args.split(',')[0])
+                    int(args[0])
                     ]
                 }
         request = bytes(json.dumps(request), 'utf8')
@@ -70,7 +70,7 @@ class BindraServer():
     def request_load(self, args):
         request = {
                 'request': 'load',
-                'args': []
+                'args': args
                 }
         request = bytes(json.dumps(request), 'utf8')
         return request
@@ -88,7 +88,7 @@ class BindraServer():
         """
 
         query = _request.query
-        request = self.requesters[query['type']](query['args'])
+        request = self.requesters[query['type']](query['args'].split(','))
 
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.connect((HOST, PORT))
