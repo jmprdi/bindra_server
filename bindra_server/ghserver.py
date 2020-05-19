@@ -19,7 +19,7 @@ def handler_test(args):
 def handler_functions(args):
     program = currentProgram
     functions = program.getFunctionManager().getFunctions(True)
-    response = [{'name': f.getName(), 'address': f.getEntryPoint()} for f in functions]
+    response = [{'name': f.getName(), 'address': int('0x'+ f.getEntryPoint().__repr__(), 16)} for f in functions]
     return response
 
     #return 'TEST_RESPONSE'
