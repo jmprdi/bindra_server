@@ -26,7 +26,7 @@ class BindraServer():
                 }
 
     def request_test(self, args):
-            """
+        """
         Requests a test from the ghserver
 
         @param args Unused
@@ -64,8 +64,8 @@ class BindraServer():
                     ]
                 }
 
-        def run(self):
-            web.run_app(self._app)
+    def run(self):
+        web.run_app(self._app)
 
     def send_request(self, _request):
         """
