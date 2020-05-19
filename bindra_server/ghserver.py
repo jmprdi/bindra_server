@@ -29,12 +29,13 @@ def handler_decompile(args):
     program = currentProgram
     functions = program.getFunctionManager().getFunctions(True)
     for func in functions:
-        if int('0x' + func.getEntryPoint().__repr__(), 16) == addr:
+        faddr = int('0x' + func.getEntryPoint().__repr__(), 16)
+        if faddr == addr:
             decomp = ghidra.app.decompiler.DecompInterface().decompileFunction(func, 0, ghidra.util.task.ConsoleTaskMonitor())
             response = decomp.getDecompiledFunction.getC()
             return response
         else:
-            return "Decompile Error: could not find function at {}".format(addr)
+            return "Decompile Error: could not find function at {}".format(faddr)
 
 handlers = {
         'test': handler_test,
