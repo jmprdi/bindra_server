@@ -25,7 +25,7 @@ def handler_functions(args):
     #return 'TEST_RESPONSE'
 
 handlers = {
-        'test': handler_test
+        'test': handler_test,
         'functions': handler_functions
         }
 
