@@ -17,7 +17,7 @@ class BindraServer():
         self._app = web.Application()
         self._app.router.add_get(
                 '/',
-                self.request
+                self.send_request
                 )
         self.requesters = {
                 'test': self.request_test,
