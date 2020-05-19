@@ -16,10 +16,17 @@ logging.basicConfig(level=logging.DEBUG,
 def handler_test(args):
     return currentProgram.__repr__()
 
+def handler_functions(args):
+    program = currentProgram
+    functions = program.getFunctionManager().getFunctions(True)
+    response = [{'name': f.getName(), 'address': f.getEntryPoint()} for f in functions]
+    return response
+
     #return 'TEST_RESPONSE'
 
 handlers = {
         'test': handler_test
+        'functions': handler_functions
         }
 
 def process(request, logger):
