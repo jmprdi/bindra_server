@@ -26,7 +26,7 @@ def handler_functions(args):
 
 def handler_decompile(args):
     addr = int(args[0])
-    address = ghidra.program.model.address.GenericAddress().getAddress(str(hex(addr)))
+    address = ghidra.program.model.address.GenericAddress.getAddress(str(hex(addr)))
     program = currentProgram
     function = program.getFunctionManager().getFunctionAt(address)
     decomp = ghidra.app.decompiler.DecompInterface().decompileFunction(function, 0, ghidra.util.task.ConsoleTaskMonitor())
