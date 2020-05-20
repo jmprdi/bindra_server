@@ -26,10 +26,13 @@ def handler_functions(args):
 
 def handler_load(args):
     fname = args[0]
+    etype = args[1]
     currexpath = currentProgram.getExecutablePath()
     progdir = os.path.dirname(os.path.abspath(currexpath))
     progpath = os.path.join(progdir, fname)
-    currentProgram.setExecutablePath(progpath)
+    for analyzer in getCurrentAnalysisOptionsAndValues(currentProgram):
+        print('analyzer ', analyzer)
+    # currentProgram.setExecutablePath(progpath)
     return currentProgram.__repr__()
 
 def handler_decompile(args):
